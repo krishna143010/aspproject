@@ -1,0 +1,10 @@
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:mysql://fund-manager-db-instance.czsd7s1g0zs2.us-east-2.rds.amazonaws.com:3306/fund-manager-db
+    username: admin
+    password: Kri$hna6242
+    driver-class-name: com.mysql.cj.jdbc.Driver

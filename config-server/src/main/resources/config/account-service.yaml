@@ -1,0 +1,21 @@
+server:
+  port: 8081
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/fundmanagerapp
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver

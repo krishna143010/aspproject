@@ -26,6 +26,7 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('fund-manager-ui app is running!');
+    console.log(compiled);
+    expect(compiled.textContent).toContain('Hello Angular');
   });
 });

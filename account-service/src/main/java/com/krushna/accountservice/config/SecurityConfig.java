@@ -2,6 +2,8 @@ package com.krushna.accountservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,8 +21,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder encoder){
-        UserDetails admin= User.withUsername("admin")
+    public UserDetailsService userDetailsService(){
+        /*UserDetails admin= User.withUsername("admin")
                 .password(encoder.encode("password"))
                 .roles("ADMIN")
                 .build();
@@ -28,8 +30,8 @@ public class SecurityConfig {
                 .password(encoder.encode("password"))
                 .roles("USER")
                 .build();
-        return new InMemoryUserDetailsManager(admin,user);
-        //return new UserLoginData();
+        return new InMemoryUserDetailsManager(admin,user);*/
+        return new UserInfoUserDetailsService();
     }
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -42,7 +44,7 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**")
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/accounts/addUser")
                 .permitAll()
                 .and()
                 .authorizeHttpRequests()
@@ -56,5 +58,12 @@ public class SecurityConfig {
                 .formLogin()
                 .and()
                 .build();
+    }
+    @Bean
+    public AuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider authenticationProvider=new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService());
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        return authenticationProvider;
     }
 }

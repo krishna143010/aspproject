@@ -4,8 +4,11 @@ package com.krushna.accountservice.service;
 //import com.javalearning.springbootdemo.error.FundManagerNotFoundException;
 //import com.javalearning.springbootdemo.repository.FundManagerRepo;
 import com.krushna.accountservice.entity.FundManager;
+import com.krushna.accountservice.entity.UserInfo;
 import com.krushna.accountservice.repository.FundManagerRepo;
+import com.krushna.accountservice.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +19,15 @@ import java.util.Optional;
 public class FundManagerSvcImpl implements FundManagerSvc{
     @Autowired
     private FundManagerRepo fundManagerRepo;
+    @Autowired
+    private UserInfoRepository userInfoRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    public String addUser(UserInfo userInfo){
+        userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
+        userInfoRepository.save(userInfo);
+        return "User "+userInfo.getName()+" Added Successfully";
+    }
 
     @Override
     public List<FundManager> fetchFundManagerList() {

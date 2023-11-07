@@ -6,6 +6,7 @@ package com.krushna.accountservice.controller;
 import com.krushna.accountservice.client.TransactionClient;
 import com.krushna.accountservice.entity.FundManager;
 import com.krushna.accountservice.entity.Transactions;
+import com.krushna.accountservice.entity.UserInfo;
 import com.krushna.accountservice.service.FundManagerSvc;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -56,5 +57,11 @@ public class FundManagerController {
     public Transactions fetchTransactionsForId(@PathVariable Long id){
 
         return transactionClient.fetchTransactionsById(id);
+    }
+    @PostMapping("/addUser")
+    public String addUser(@Valid @RequestBody UserInfo userInfo){
+        //calling service
+        logger.info("Logging for add user");
+        return fundManagerSvc.addUser(userInfo);
     }
 }

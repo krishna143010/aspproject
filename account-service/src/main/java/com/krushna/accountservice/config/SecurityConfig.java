@@ -1,9 +1,13 @@
 package com.krushna.accountservice.config;
 
+import com.krushna.accountservice.filter.JwtAuthFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,11 +19,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+    @Autowired
+    private JwtAuthFilter jwtAuthFilter;
     @Bean
     public UserDetailsService userDetailsService(){
         /*UserDetails admin= User.withUsername("admin")
@@ -42,9 +49,12 @@ public class SecurityConfig {
         return httpSecurity
                 //.sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf()
-                .disable()
+                .disable().authorizeHttpRequests()
+                .requestMatchers("/user-service/changeUserLoginStatus")
+                .authenticated()
+                .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/accounts/addUser")
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/accounts/addUser","/user-service/**")
                 .permitAll()
                 .and()
                 .authorizeHttpRequests()
@@ -55,8 +65,11 @@ public class SecurityConfig {
                 .requestMatchers("/accounts/**")
                 .permitAll()
                 .and()
-                .formLogin()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
     @Bean
@@ -65,5 +78,9 @@ public class SecurityConfig {
         authenticationProvider.setUserDetailsService(userDetailsService());
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
+    }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }

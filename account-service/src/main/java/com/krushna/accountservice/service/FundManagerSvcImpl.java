@@ -19,15 +19,7 @@ import java.util.Optional;
 public class FundManagerSvcImpl implements FundManagerSvc{
     @Autowired
     private FundManagerRepo fundManagerRepo;
-    @Autowired
-    private UserInfoRepository userInfoRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    public String addUser(UserInfo userInfo){
-        userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
-        userInfoRepository.save(userInfo);
-        return "User "+userInfo.getName()+" Added Successfully";
-    }
+
 
     @Override
     public List<FundManager> fetchFundManagerList() {

@@ -58,10 +58,5 @@ public class FundManagerController {
 
         return transactionClient.fetchTransactionsById(id);
     }
-    @PostMapping("/addUser")
-    public String addUser(@Valid @RequestBody UserInfo userInfo){
-        //calling service
-        logger.info("Logging for add user");
-        return fundManagerSvc.addUser(userInfo);
-    }
+
 }

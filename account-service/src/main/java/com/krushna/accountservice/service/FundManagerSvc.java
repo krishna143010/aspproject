@@ -13,7 +13,6 @@ public interface FundManagerSvc {
     List<FundManager> fetchFundManagerList();
 
     FundManager saveFundManager(FundManager fundManager);
-    String addUser(UserInfo userInfo);
 
     FundManager fetchByFMId(Long id);
 

@@ -1,5 +1,7 @@
 package com.krushna.accountservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +26,7 @@ public class UserInfo {
     private String username;
     @Column(unique = true)
     private String email;
+    @JsonBackReference  // Add this annotation
     private String password;
     private String roles;
     private String AuthenticatioCode;

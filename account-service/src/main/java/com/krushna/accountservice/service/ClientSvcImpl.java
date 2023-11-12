@@ -23,7 +23,8 @@ public class ClientSvcImpl implements ClientsSvc{
     }//findAllByfundManager
     @Override
     public List<Clients> fetchClientsListByFMid(Long id) {
-        return clientsRepo.findAllByfundManager(new FundManager(id,"tdfdg",false,false,null));
+        //return clientsRepo.findAllByfundManager(new FundManager(id,"tdfdg",false,false,null));
+        return clientsRepo.findAllByfundManager(FundManager.builder().fmid(id).build());
     }
     @Override
     public Clients saveClients(Clients Clients) {

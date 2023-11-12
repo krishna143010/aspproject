@@ -1,4 +1,4 @@
-package com.krushna.accountservice.model;
+package com.krushna.corejms.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,5 +13,4 @@ public class JmsMessageToBeSend {
     private String toemail;
     private String subject;
     private String message;
-
 }

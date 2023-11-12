@@ -33,6 +33,8 @@ public class UserLoginRegisterSvcImpl implements UserLoginRegisterSvc{
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
+    private FundManagerSvc fundManagerSvc;
+    @Autowired
     private JmsServiceImpl jmsService;
     public String addUser(UserInfo userInfo) throws Exception {
         Optional<Roles> availableRoles=rolesRepository.findByRole(userInfo.getRoles());
@@ -42,6 +44,7 @@ public class UserLoginRegisterSvcImpl implements UserLoginRegisterSvc{
             UserInfo userInfoAdded=userInfoRepository.save(userInfo);
             if(userInfoAdded!=null){
                 jmsService.sendMessage(JmsMessageToBeSend.builder().message("Verification code is "+userInfoAdded.getAuthenticatioCode()+" and is valid until "+userInfoAdded.getAuthenticatioCodeExpiry()).subject("Code from Fund Manager Application").toemail(userInfoAdded.getEmail()).build());
+                fundManagerSvc.saveFundManager(FundManager.builder().fmName(userInfoAdded.getUsername()).activeStatus(userInfoAdded.isEnabled()).deleteStatus(false).userInfo(userInfoAdded).build());
                 return "User "+userInfo.getUsername()+" Added Successfully";
             }
             throw new Exception("Save failed. Kindly check logs.");

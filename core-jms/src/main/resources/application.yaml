@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: core-jms
+  artemis:
+    broker-url: tcp://localhost:61616
+    mode: native
+    user: admin
+    password: admin
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: krishna143010@gmail.com
+    password: pyeejvthhpglqalz
+    properties:
+      mail:
+        smtp:
+          auth: true
+#          ssl:
+#            enable: true
+          starttls:
+            enable: true
+    socketFactory:
+      fallback: false
+      class: javax.net.ssl.SSLSocketFactory
+#  send:
+#    from:
+#      email: krushna7407@gmail.com
+server:
+  port: 8085
+emailProcessEnabled: true

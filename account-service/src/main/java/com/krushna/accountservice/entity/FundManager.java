@@ -1,11 +1,14 @@
 package com.krushna.accountservice.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 //import javax.persistence.*;
 //import javax.validation.constraints.NotBlank;
@@ -16,6 +19,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 public class FundManager {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,5 +33,9 @@ public class FundManager {
     private boolean deleteStatus;
     @Column(name = "timestamp", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     public Timestamp timestamp;
+    @OneToOne
+    @NotNull
+    @JsonManagedReference
+    private UserInfo userInfo;
 
 }

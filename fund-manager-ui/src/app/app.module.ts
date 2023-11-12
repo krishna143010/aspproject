@@ -14,6 +14,8 @@ import {HttpClientModule} from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { RootTestComponent } from './root-test/root-test.component';
 import { RegisterComponent } from './register/register.component';
+import { HomeComponent } from './home/home.component';
+import { TransactionComponent } from './transaction/transaction.component';
 
 
 
@@ -22,7 +24,9 @@ import { RegisterComponent } from './register/register.component';
     AppComponent,
     LoginComponent,
     RootTestComponent,
-    RegisterComponent
+    RegisterComponent,
+    HomeComponent,
+    TransactionComponent
   ],
   imports: [
     BrowserModule,

@@ -4,6 +4,7 @@ import com.krushna.accountservice.entity.ErrorMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,6 +28,13 @@ public class ExceptionHandling {
         log.warn(ex.getMessage());
         ErrorMessageDescription message=new ErrorMessageDescription(HttpStatus.NOT_ACCEPTABLE.value(),new Date(),ex.getMessage(),request.getDescription(false));
         return new ResponseEntity<>(message, HttpStatus.NOT_ACCEPTABLE);
+    }
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorMessageDescription> handleBadCredentialsException(Exception ex, WebRequest request) {
+        // Create a custom ErrorResponse object and return it with the desired HTTP status code.
+        log.warn(ex.getMessage());
+        ErrorMessageDescription message=new ErrorMessageDescription(HttpStatus.UNAUTHORIZED.value(),new Date(),ex.getMessage(),request.getDescription(false));
+        return new ResponseEntity<>(message, HttpStatus.UNAUTHORIZED);
     }
 }
 

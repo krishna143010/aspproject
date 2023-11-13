@@ -11,12 +11,16 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {HttpClientModule} from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RootTestComponent } from './root-test/root-test.component';
 import { RegisterComponent } from './register/register.component';
 import { HomeComponent } from './home/home.component';
 import { TransactionComponent } from './transaction/transaction.component';
 
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatIconModule} from '@angular/material/icon';
+import {MatTableModule} from '@angular/material/table';
+import { ManageUsersComponent } from './manage-users/manage-users.component';
 
 
 @NgModule({
@@ -26,7 +30,8 @@ import { TransactionComponent } from './transaction/transaction.component';
     RootTestComponent,
     RegisterComponent,
     HomeComponent,
-    TransactionComponent
+    TransactionComponent,
+    ManageUsersComponent
   ],
   imports: [
     BrowserModule,
@@ -38,7 +43,11 @@ import { TransactionComponent } from './transaction/transaction.component';
     MatInputModule,
     MatButtonModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

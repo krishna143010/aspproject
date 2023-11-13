@@ -8,6 +8,7 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
   ProceedLogin(inputdata: any) {
+    inputdata=inputdata
     return this.http.post('http://localhost:8081/user-service/authenticate', inputdata,{responseType: 'text'});
   }
   IsLoogedIn() {
@@ -22,7 +23,12 @@ export class UserService {
   }
 
   Registeration(inputdata: any) {
-    return this.http.post('https://localhost:44308/User/Register', inputdata);
+    const updatedVariable: any = {
+      ...inputdata,
+      roles: "ROLE_FM",
+    };
+    console.log("Input data"+JSON.stringify(updatedVariable));
+    return this.http.post('http://localhost:8081/user-service/addUser', updatedVariable,{responseType: 'text'});
   }
 
   GetRole() { //TODO

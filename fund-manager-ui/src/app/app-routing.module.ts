@@ -8,6 +8,7 @@ import { HomeComponent } from './home/home.component';
 import { StatusComponent } from './status/status.component';
 import { AuthGuard } from './Guard/auth.guard';
 import { TransactionComponent } from './transaction/transaction.component';
+import { ManageUsersComponent } from './manage-users/manage-users.component';
 
 const routes: Routes = [
   {path:'',component:HomeComponent},
@@ -15,6 +16,7 @@ const routes: Routes = [
   {path:'login',component:LoginComponent},
   {path:'register',component:RegisterComponent},
   {path:'transaction',component:TransactionComponent,canActivate:[AuthGuard]},
+  {path:'manageusers',component:ManageUsersComponent,canActivate:[AuthGuard]},
   {path:'**',component: StatusComponent}
 ];
 

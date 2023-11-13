@@ -9,6 +9,7 @@ import com.krushna.accountservice.entity.UserInfo;
 import com.krushna.accountservice.error.InvalidCodeException;
 import com.krushna.accountservice.error.InvalidUserException;
 import com.krushna.accountservice.error.RoleNotPresentException;
+import com.krushna.accountservice.error.UserNameOrEmailConflictException;
 import com.krushna.accountservice.model.JmsMessageToBeSend;
 import com.krushna.accountservice.model.UserActiveRequest;
 import com.krushna.accountservice.model.VerifyCodeRequest;
@@ -21,7 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 @Service
 @Slf4j
 public class UserLoginRegisterSvcImpl implements UserLoginRegisterSvc{
@@ -41,13 +43,25 @@ public class UserLoginRegisterSvcImpl implements UserLoginRegisterSvc{
         log.info("Requested role "+userInfo.getRoles()+" Available roles "+availableRoles);
         if(availableRoles.isPresent()) {
             userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
-            UserInfo userInfoAdded=userInfoRepository.save(userInfo);
-            if(userInfoAdded!=null){
-                jmsService.sendMessage(JmsMessageToBeSend.builder().message("Verification code is "+userInfoAdded.getAuthenticatioCode()+" and is valid until "+userInfoAdded.getAuthenticatioCodeExpiry()).subject("Code from Fund Manager Application").toemail(userInfoAdded.getEmail()).build());
-                fundManagerSvc.saveFundManager(FundManager.builder().fmName(userInfoAdded.getUsername()).activeStatus(userInfoAdded.isEnabled()).deleteStatus(false).userInfo(userInfoAdded).build());
-                return "User "+userInfo.getUsername()+" Added Successfully";
+            try{
+                UserInfo userInfoAdded=userInfoRepository.save(userInfo);
+                if(userInfoAdded!=null){
+                    try{
+                        fundManagerSvc.saveFundManager(FundManager.builder().fmName(userInfoAdded.getUsername()).activeStatus(userInfoAdded.isEnabled()).deleteStatus(false).userInfo(userInfoAdded).build());
+
+                    }catch (Exception e){
+                        throw new Exception("Save failed. Kindly check logs.");
+                    }
+                    jmsService.sendMessage(JmsMessageToBeSend.builder().message("Verification code is "+userInfoAdded.getAuthenticatioCode()+" and is valid until "+userInfoAdded.getAuthenticatioCodeExpiry()).subject("Code from Fund Manager Application").toemail(userInfoAdded.getEmail()).build());
+                    return "User "+userInfo.getUsername()+" Added Successfully";
+                }else{
+                    throw new Exception("Save failed. Kindly check logs.");
+                }
+            }catch (DataIntegrityViolationException  e){
+                throw new UserNameOrEmailConflictException("Username or Email is already registered");
+            }catch (Exception e){
+                throw new Exception("Save failed. Kindly check logs.");
             }
-            throw new Exception("Save failed. Kindly check logs.");
         }else{
             throw  new RoleNotPresentException("Role is not valid");
         }

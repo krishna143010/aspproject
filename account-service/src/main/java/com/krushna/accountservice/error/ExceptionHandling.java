@@ -22,6 +22,13 @@ public class ExceptionHandling {
         ErrorMessageDescription message=new ErrorMessageDescription(HttpStatus.INTERNAL_SERVER_ERROR.value(),new Date(),ex.getMessage(),request.getDescription(false));
         return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    @ExceptionHandler(UserNameOrEmailConflictException.class)
+    public ResponseEntity<ErrorMessageDescription> handleUserNameOrEmailConflictException(Exception ex, WebRequest request) {
+        // Create a custom ErrorResponse object and return it with the desired HTTP status code.
+        log.warn(ex.getMessage());
+        ErrorMessageDescription message=new ErrorMessageDescription(HttpStatus.CONFLICT.value(),new Date(),ex.getMessage(),request.getDescription(false));
+        return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+    }
     @ExceptionHandler(RoleNotPresentException.class)
     public ResponseEntity<ErrorMessageDescription> handleRoleNotPresentException(Exception ex, WebRequest request) {
         // Create a custom ErrorResponse object and return it with the desired HTTP status code.

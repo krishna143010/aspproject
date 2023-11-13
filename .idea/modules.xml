@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/account-service/account-service.iml" filepath="$PROJECT_DIR$/account-service/account-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/aspproject.iml" filepath="$PROJECT_DIR$/.idea/aspproject.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core-jms/core-jms.iml" filepath="$PROJECT_DIR$/core-jms/core-jms.iml" />
     </modules>
   </component>
 </project>

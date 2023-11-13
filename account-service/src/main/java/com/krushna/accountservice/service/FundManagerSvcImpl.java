@@ -34,9 +34,6 @@ public class FundManagerSvcImpl implements FundManagerSvc{
     @Override
     public FundManager fetchByFMId(Long id)/* throws FundManagerNotFoundException*/ {
         Optional<FundManager> FMResponse= fundManagerRepo.findById(id);
-        /*if(FMResponse.isPresent()){
-           // throw new FundManagerNotFoundException("Fund Manager Not Found for id:"+id);
-        }*/
         return FMResponse.get();
     }
     @Override

@@ -6,6 +6,7 @@ package com.krushna.accountservice.service;
 import com.krushna.accountservice.entity.FundManager;
 import com.krushna.accountservice.entity.Roles;
 import com.krushna.accountservice.entity.UserInfo;
+import com.krushna.accountservice.entity.UserInfoListener;
 import com.krushna.accountservice.error.InvalidCodeException;
 import com.krushna.accountservice.error.InvalidUserException;
 import com.krushna.accountservice.error.RoleNotPresentException;
@@ -31,6 +32,8 @@ public class UserLoginRegisterSvcImpl implements UserLoginRegisterSvc{
     @Autowired
     private UserInfoRepository userInfoRepository;
     @Autowired
+    private JwtService jwtService;
+    @Autowired
     private RolesRepository rolesRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -38,6 +41,8 @@ public class UserLoginRegisterSvcImpl implements UserLoginRegisterSvc{
     private FundManagerSvc fundManagerSvc;
     @Autowired
     private JmsServiceImpl jmsService;
+    @Autowired
+    private UserInfoListener userInfoListener;
     public String addUser(UserInfo userInfo) throws Exception {
         Optional<Roles> availableRoles=rolesRepository.findByRole(userInfo.getRoles());
         log.info("Requested role "+userInfo.getRoles()+" Available roles "+availableRoles);
@@ -93,5 +98,25 @@ public class UserLoginRegisterSvcImpl implements UserLoginRegisterSvc{
         }else{
             throw new Exception("Status not changed. Please Check Logs");
         }
+    }
+
+    @Override
+    public List<UserInfo> getAllUsers() {
+        return userInfoRepository.findAll();
+    }
+
+    @Override
+    public UserInfo getAUserById(Integer id) {
+        Optional<UserInfo> UserResponse= userInfoRepository.findById(id);
+        return UserResponse.get();
+    }
+    @Override
+    public UserInfo generateNewCode(String token) {
+
+        String username=jwtService.extractUsername(token.replace("Bearer ",""));
+        UserInfo existingData= userInfoRepository.findByUsername(username).get();
+        existingData.setAuthenticatioCode(userInfoListener.generateRandomString());
+        existingData.setAuthenticatioCodeExpiry(userInfoListener.generateDateTime());
+        return userInfoRepository.save(existingData);
     }
 }

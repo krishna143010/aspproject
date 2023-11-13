@@ -26,8 +26,4 @@ public class JmsServiceImpl implements JmsService{
 
     @Autowired
     private JmsTemplate msgSender;
-//    @Autowired
-//    public JmsServiceImpl(JmsTemplate jmsTemplate){
-//        this.jmsTemplate=jmsTemplate;
-//    }
 }

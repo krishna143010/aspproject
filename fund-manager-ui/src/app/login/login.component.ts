@@ -30,8 +30,8 @@ export class LoginComponent implements OnInit {
         }
       },
       error => {
-        console.log(JSON.stringify(error));
-        alert("Login Ferror "+ JSON.stringify(error));
+        console.log("Login error "+JSON.stringify(error));
+        alert("Login error "+ JSON.stringify(error));
       }
       );
     }

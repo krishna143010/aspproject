@@ -10,7 +10,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
-import {HttpClientModule} from '@angular/common/http';
+import {HttpClientModule,HTTP_INTERCEPTORS} from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RootTestComponent } from './root-test/root-test.component';
 import { RegisterComponent } from './register/register.component';
@@ -20,7 +20,16 @@ import { TransactionComponent } from './transaction/transaction.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTableModule} from '@angular/material/table';
-import { ManageUsersComponent } from './manage-users/manage-users.component';
+import { TokenInterceptorService } from './Service/token-interceptor.service';
+import { UserComponent } from './user/user.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ModalpopupComponent } from './modalpopup/modalpopup.component';
+import { JwtModule } from '@auth0/angular-jwt';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatToolbarModule} from '@angular/material/toolbar';
+
+
 
 
 @NgModule({
@@ -31,7 +40,8 @@ import { ManageUsersComponent } from './manage-users/manage-users.component';
     RegisterComponent,
     HomeComponent,
     TransactionComponent,
-    ManageUsersComponent
+    UserComponent,
+    ModalpopupComponent
   ],
   imports: [
     BrowserModule,
@@ -47,9 +57,14 @@ import { ManageUsersComponent } from './manage-users/manage-users.component';
     ReactiveFormsModule,
     MatTooltipModule,
     MatIconModule,
-    MatTableModule
+    MatTableModule,
+    MatPaginatorModule,
+    MatDialogModule,
+    JwtModule,
+    MatMenuModule,
+    MatToolbarModule
   ],
-  providers: [],
+  providers: [{provide:HTTP_INTERCEPTORS,useClass:TokenInterceptorService,multi:true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

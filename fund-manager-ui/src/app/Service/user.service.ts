@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
+import { BYPASS_LOG } from './token-interceptor.service';
+import { Buffer } from 'buffer';
 @Injectable({
   providedIn: 'root'
 })
@@ -8,8 +9,8 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
   ProceedLogin(inputdata: any) {
-    inputdata=inputdata
-    return this.http.post('http://localhost:8081/user-service/authenticate', inputdata,{responseType: 'text'});
+    console.log("Input data:"+JSON.stringify(inputdata));
+    return this.http.post('http://localhost:8081/user-service/authenticate', inputdata,{ context: new HttpContext().set(BYPASS_LOG, true) ,responseType: 'text'});
   }
   IsLoogedIn() {
     //this.GetRole();
@@ -28,14 +29,13 @@ export class UserService {
       roles: "ROLE_FM",
     };
     console.log("Input data"+JSON.stringify(updatedVariable));
-    return this.http.post('http://localhost:8081/user-service/addUser', updatedVariable,{responseType: 'text'});
+    return this.http.post('http://localhost:8081/user-service/addUser', updatedVariable,{ context: new HttpContext().set(BYPASS_LOG, true) ,responseType: 'text'});
   }
 
-  GetRole() { //TODO
+  GetRole() {
     var token = localStorage.getItem('token');
     if (token != null) {
       var extractdata = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-      console.log("extractdata"+JSON.stringify(extractdata))
       return extractdata.role;
     }else{
       return '';

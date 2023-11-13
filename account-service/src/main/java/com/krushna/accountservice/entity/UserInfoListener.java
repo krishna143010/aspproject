@@ -24,7 +24,7 @@ public class UserInfoListener {
         entity.setAuthenticatioCodeExpiry(dateTime);
     }
 
-    private String generateRandomString() {
+    public String generateRandomString() {
         // Implement your logic to generate a random string here
         // For example, you can use UUID.randomUUID().toString() to generate a random string
         Random random = new Random();
@@ -38,7 +38,7 @@ public class UserInfoListener {
 
         return randomString.toString();
     }
-    public static Date generateDateTime() {
+    public Date generateDateTime() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MINUTE, 10); // Add 10 minutes to the current time
 

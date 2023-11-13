@@ -26,12 +26,21 @@ public class UserInfo {
     private String username;
     @Column(unique = true)
     private String email;
+
+    @JsonIgnore
     @JsonBackReference  // Add this annotation
     private String password;
+
     private String roles;
+
+    @JsonIgnore
+    @JsonBackReference
     private String AuthenticatioCode;
-    //@Column(name = "AuthenticatioCodeExpiry", nullable = false, updatable = false, insertable = false)
+
+    @JsonIgnore
+    @JsonBackReference
     private Date AuthenticatioCodeExpiry;
+
     @Column(columnDefinition = "boolean default false")
     private boolean AuthenticationStatus;
     @Column(columnDefinition = "boolean default false")

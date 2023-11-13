@@ -1,0 +1,23 @@
+<h2>Update User</h2>
+<form [formGroup]="updateform" (ngSubmit)="SaveUser()">
+    <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>User Id</mat-label>
+        <input matInput formControlName="id">
+      </mat-form-field>
+<mat-form-field appearance="fill">
+    <mat-label>Enable Status</mat-label>
+    <mat-select formControlName="activeStatus" >
+      <mat-option [value]="true">
+        Activate
+      </mat-option>
+      <mat-option [value]="false">
+        Inactivate
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div>
+            <button mat-raised-button color="primary">Update</button> | 
+            <button mat-raised-button mat-dialog-close color="accent">Close</button>
+        </div>
+        </form>
+  

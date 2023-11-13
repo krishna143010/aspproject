@@ -15,4 +15,7 @@ public interface UserLoginRegisterSvc {
     String addUser(UserInfo userInfo) throws Exception;
     String verifyCode(VerifyCodeRequest verifyCodeInfo);
     String changeUserActiveStatus(UserActiveRequest userActiveRequest) throws Exception;
+    List<UserInfo> getAllUsers();
+    UserInfo getAUserById(Integer id);
+    UserInfo generateNewCode(String token);
 }

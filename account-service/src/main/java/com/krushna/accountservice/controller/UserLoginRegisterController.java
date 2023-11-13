@@ -1,5 +1,6 @@
 package com.krushna.accountservice.controller;
 
+import com.krushna.accountservice.entity.FundManager;
 import com.krushna.accountservice.entity.UserInfo;
 import com.krushna.accountservice.model.AuthRequest;
 import com.krushna.accountservice.model.UserActiveRequest;
@@ -20,10 +21,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("user-service")
@@ -51,6 +51,14 @@ public class UserLoginRegisterController {
         return ResponseEntity.status(HttpStatus.OK).body(userLoginRegisterSvc.verifyCode(verifyCodeRequest));
     }
     @PreAuthorize("hasAuthority('ROLE_ADMIN')" + "or hasAuthority('ROLE_FM')")
+    @PostMapping("/generateNewCode")
+    public ResponseEntity<Object> generateNewCode(HttpServletRequest request, HttpServletResponse response){
+
+        logger.info("generateNewCode____");
+
+        return ResponseEntity.status(HttpStatus.OK).body(userLoginRegisterSvc.generateNewCode(request.getHeader("Authorization")));
+    }
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')" + "or hasAuthority('ROLE_FM')")
     @PostMapping("/changeUserLoginStatus")
     public ResponseEntity<Object> activateUser(@Valid @RequestBody UserActiveRequest activateUserRequest, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -61,14 +69,29 @@ public class UserLoginRegisterController {
 
     @PostMapping("/authenticate")
     public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+        logger.info("Authenticating____");
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         if (authentication.isAuthenticated()) {
             return jwtService.generateToken(authRequest.getUsername());
         } else {
             throw new UsernameNotFoundException("invalid user request !");
         }
+    }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')" + "or hasAuthority('ROLE_FM')")
+    @GetMapping("/Users/{id}")
+    public ResponseEntity<Object> getUsersById(@PathVariable("id") Integer id,HttpServletRequest request, HttpServletResponse response) throws Exception {
 
+        logger.info("Get user by id:"+id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(userLoginRegisterSvc.getAUserById(id));
+    }
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @GetMapping("/Users")
+    public ResponseEntity<Object> getAllUsers(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        logger.info("Get all request ");
+
+        return ResponseEntity.status(HttpStatus.OK).body(userLoginRegisterSvc.getAllUsers());
     }
 
 }

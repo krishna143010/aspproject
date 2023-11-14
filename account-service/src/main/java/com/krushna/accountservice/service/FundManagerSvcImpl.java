@@ -6,9 +6,7 @@ package com.krushna.accountservice.service;
 import com.krushna.accountservice.entity.FundManager;
 import com.krushna.accountservice.entity.UserInfo;
 import com.krushna.accountservice.repository.FundManagerRepo;
-import com.krushna.accountservice.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +17,10 @@ import java.util.Optional;
 public class FundManagerSvcImpl implements FundManagerSvc{
     @Autowired
     private FundManagerRepo fundManagerRepo;
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private UserLoginRegisterSvc userLoginRegisterSvc;
 
 
     @Override
@@ -55,4 +57,9 @@ public class FundManagerSvcImpl implements FundManagerSvc{
         }
         return fundManagerRepo.save(existingData);
     }
+//    @Override
+//    public FundManager getFMByToken(String token){
+//        UserInfo userInfo=this.userLoginRegisterSvc.getUserByUsername(this.jwtService.extractUsername(token));
+//        return this.fundManagerRepo.findByuserInfo(userInfo);
+//    }
 }

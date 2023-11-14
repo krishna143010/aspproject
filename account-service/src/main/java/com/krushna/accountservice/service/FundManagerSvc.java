@@ -19,4 +19,6 @@ public interface FundManagerSvc {
     public void deleteFMById(Long id);
 
     FundManager updateFMById(Long id, FundManager fmToBeUpdated);
+
+//    FundManager getFMByToken(String token);
 }

@@ -126,4 +126,9 @@ public class UserLoginRegisterSvcImpl implements UserLoginRegisterSvc{
         existingData.setAuthenticatioCodeExpiry(userInfoListener.generateDateTime());
         return userInfoRepository.save(existingData);
     }
+
+//    @Override
+//    public UserInfo getUserByUsername(String username) {
+//        return userInfoRepository.findByUsername(username).get();
+//    }
 }

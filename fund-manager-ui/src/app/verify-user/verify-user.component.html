@@ -1,0 +1,18 @@
+<h2>Verify User</h2>
+<form [formGroup]="verifyForm">
+  <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>Username</mat-label>
+    <input matInput formControlName="username">
+  </mat-form-field>
+  <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>Code</mat-label>
+    <input matInput formControlName="codeSupplied">
+  </mat-form-field>
+  <p>Please enter the code you recieved in your registered email.</p>
+  <div>
+    <button mat-raised-button color="primary" [disabled]="!this.verifyForm.valid" (click)="verifyCode()">Verify</button> | <button mat-button (click)="resendCode()">Resend</button> | <button mat-button mat-dialog-close>Close</button>
+  </div>
+</form>
+<div class="spinner-wrapper light-theme" *ngIf="isLoading | async">
+  <mat-spinner></mat-spinner>
+</div>

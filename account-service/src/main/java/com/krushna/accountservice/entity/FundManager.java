@@ -35,7 +35,6 @@ public class FundManager {
     public Timestamp timestamp;
     @OneToOne
     @NotNull
-    @JsonManagedReference
     private UserInfo userInfo;
 
 }

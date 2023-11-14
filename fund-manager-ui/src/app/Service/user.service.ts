@@ -1,4 +1,4 @@
-import { HttpClient, HttpContext } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BYPASS_LOG } from './token-interceptor.service';
 import { Buffer } from 'buffer';
@@ -31,6 +31,13 @@ export class UserService {
     console.log("Input data"+JSON.stringify(updatedVariable));
     return this.http.post('http://localhost:8081/user-service/addUser', updatedVariable,{ context: new HttpContext().set(BYPASS_LOG, true) ,responseType: 'text'});
   }
+  GenerateNewCode(username: any) {
+    const params = new HttpParams().set('username', username);
+    return this.http.post('http://localhost:8081/user-service/generateNewCodeDirect',  params,{ context: new HttpContext().set(BYPASS_LOG, true) ,responseType: 'text'});
+  }
+  VerifyCode(input: any) {
+    return this.http.post('http://localhost:8081/user-service/verifyCode',  input,{ context: new HttpContext().set(BYPASS_LOG, true) ,responseType: 'text'});
+  }
 
   GetRole() {
     var token = localStorage.getItem('token');
@@ -41,5 +48,8 @@ export class UserService {
       return '';
     }
 
+  }
+  clearToken() {
+    localStorage.removeItem('token');
   }
 }

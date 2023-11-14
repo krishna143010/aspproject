@@ -27,7 +27,7 @@ public class UserInfo {
     @Column(unique = true)
     private String email;
 
-    @JsonIgnore
+
     @JsonBackReference  // Add this annotation
     private String password;
 

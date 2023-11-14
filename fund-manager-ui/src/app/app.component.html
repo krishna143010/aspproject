@@ -310,14 +310,25 @@
     alt="Angular Logo"
     src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg=="
   />
-  <a routerLink="home">Home</a>
-  <a routerLink="transaction" *ngIf="currentRole=='ROLE_FM'">Transaction</a>
-  <a routerLink="Summary" *ngIf="currentRole=='ROLE_FM'">Summary</a>
-  <a routerLink="manageusers" *ngIf="currentRole=='ROLE_FM'">Services</a>
-  <a routerLink="Statement">Statement</a>
-  <a routerLink="About">About</a>
+  <button mat-button routerLink="home">Home</button>
+  <button mat-button routerLink="transaction" *ngIf="currentRole=='ROLE_FM'">Transaction</button>
+  <button mat-button routerLink="Summary" *ngIf="currentRole=='ROLE_FM'">Summary</button>
+  <button mat-button [matMenuTriggerFor]="services" >Services</button>
+  <mat-menu #services>
+    <button mat-menu-item *ngIf="currentRole=='ROLE_ADMIN'" routerLink="manageusers">Manage FMs</button>
+    <button mat-menu-item *ngIf="currentRole==''" (click)="loadVerifyUser()">Verify User</button>
+    <button mat-menu-item *ngIf="currentRole=='ROLE_FM'" routerLink="addClient">Add Client</button>
+    <button mat-menu-item *ngIf="currentRole=='ROLE_FM'" routerLink="addAccount">Add Account</button>
+  </mat-menu>
+  <button mat-button routerLink="Statement" *ngIf="currentRole=='ROLE_FM'">Statement</button>
+  <button mat-button routerLink="About">About</button>
   <div class="spacer"></div>
-  <a routerLink="login">Log In</a>
+  <button mat-button routerLink="login" *ngIf="currentRole==''">Log In</button>
+  <button mat-button [matMenuTriggerFor]="profileOptions" *ngIf="currentRole!=''" >Profile</button>
+  <mat-menu #profileOptions>
+    <button mat-menu-item>User Name</button>
+    <button mat-menu-item (click)="logOutClicked()">Log out</button>
+  </mat-menu>
 </div>
 <div class="content">
   <router-outlet></router-outlet>

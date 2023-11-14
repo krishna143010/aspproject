@@ -3,7 +3,7 @@ import { UserService } from '../Service/user.service';
 import { NgForm } from '@angular/forms';
 import { Route,Router } from '@angular/router';
 import { AppRoutingModule } from '../app-routing.module';
-
+import * as alertify from 'alertifyjs'
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -26,12 +26,12 @@ export class LoginComponent implements OnInit {
           this.route.navigate(['home']);
 
         }else{
-          alert("Login Failed");
+          //alert("Login Failed");
+          alertify.error("Log In Failed");
         }
       },
       error => {
-        console.log("Login error "+JSON.stringify(error));
-        alert("Login error "+ JSON.stringify(error));
+        alertify.error("Invalid Credentials");
       }
       );
     }

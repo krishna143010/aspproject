@@ -9,6 +9,7 @@ import { StatusComponent } from './status/status.component';
 import { AuthGuard } from './Guard/auth.guard';
 import { TransactionComponent } from './transaction/transaction.component';
 import { UserComponent } from './user/user.component';
+import { VerifyUserComponent } from './verify-user/verify-user.component';
 
 const routes: Routes = [
   {path:'',component:HomeComponent},

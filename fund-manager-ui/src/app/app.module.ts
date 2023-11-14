@@ -28,6 +28,9 @@ import { ModalpopupComponent } from './modalpopup/modalpopup.component';
 import { JwtModule } from '@auth0/angular-jwt';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { VerifyUserComponent } from './verify-user/verify-user.component';
+import { AddClientComponent } from './add-client/add-client.component';
 
 
 
@@ -41,7 +44,9 @@ import {MatToolbarModule} from '@angular/material/toolbar';
     HomeComponent,
     TransactionComponent,
     UserComponent,
-    ModalpopupComponent
+    ModalpopupComponent,
+    VerifyUserComponent,
+    AddClientComponent
   ],
   imports: [
     BrowserModule,
@@ -62,7 +67,8 @@ import {MatToolbarModule} from '@angular/material/toolbar';
     MatDialogModule,
     JwtModule,
     MatMenuModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatProgressSpinnerModule
   ],
   providers: [{provide:HTTP_INTERCEPTORS,useClass:TokenInterceptorService,multi:true}],
   bootstrap: [AppComponent]

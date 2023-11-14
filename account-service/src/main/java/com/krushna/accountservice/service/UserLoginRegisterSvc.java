@@ -18,4 +18,5 @@ public interface UserLoginRegisterSvc {
     List<UserInfo> getAllUsers();
     UserInfo getAUserById(Integer id);
     UserInfo generateNewCode(String token);
+    UserInfo generateNewCodeDirect(String username);
 }

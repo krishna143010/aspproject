@@ -4,7 +4,7 @@
    <mat-card-content>
     <form class="example-form" [formGroup]="reactiveform" (ngSubmit)="SaveUser()">
         
-        
+      
         <mat-form-field class="example-full-width" appearance="fill">
           <mat-label>Username</mat-label>
           <input matInput placeholder="Username" formControlName="username"  >
@@ -23,7 +23,9 @@
             <a mat-raised-button style="margin: 5px" color="accent" (click)="RedirectLogin()">Close</a>
           </div>
       </form>
-     
+      <div class="spinner-wrapper light-theme" *ngIf="isLoading | async">
+        <mat-spinner></mat-spinner>
+      </div>
    </mat-card-content>
    
 </mat-card>

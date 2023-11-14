@@ -58,6 +58,13 @@ public class UserLoginRegisterController {
 
         return ResponseEntity.status(HttpStatus.OK).body(userLoginRegisterSvc.generateNewCode(request.getHeader("Authorization")));
     }
+    @PostMapping("/generateNewCodeDirect")
+    public ResponseEntity<Object> generateNewCodeDirect(@RequestParam(value="username") String username, HttpServletRequest request, HttpServletResponse response){
+
+        logger.info("generateNewCode directly____");
+        userLoginRegisterSvc.generateNewCodeDirect(username);
+        return ResponseEntity.status(HttpStatus.OK).body("Generated successfully");
+    }
     @PreAuthorize("hasAuthority('ROLE_ADMIN')" + "or hasAuthority('ROLE_FM')")
     @PostMapping("/changeUserLoginStatus")
     public ResponseEntity<Object> activateUser(@Valid @RequestBody UserActiveRequest activateUserRequest, HttpServletRequest request, HttpServletResponse response) throws Exception {

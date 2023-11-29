@@ -22,7 +22,6 @@ import java.util.List;
 @SuperBuilder
 public class FundManager {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private long fmid;
     @Column(unique = true)
     @NotBlank(message = "Fund Manager Name Should Not be Empty")
@@ -34,7 +33,7 @@ public class FundManager {
     @Column(name = "timestamp", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     public Timestamp timestamp;
     @OneToOne
-    @NotNull
+    @MapsId
     private UserInfo userInfo;
 
 }

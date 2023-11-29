@@ -1,0 +1,29 @@
+<mat-card>
+    <mat-card-title>Set Interest Rate for The Account</mat-card-title>
+    <mat-card-content>
+        <form class="example-form" [formGroup]="setInterestForm" (ngSubmit)="settleInterest()">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Account Name</mat-label>
+                <mat-select formControlName="accountId">
+                    <mat-option *ngFor="let control of this.avlAccounts" [value]="control.accountId">
+                        {{ control.accountName }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Interest Settlement Date</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="startDate" [readOnly]="true">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+            <div>
+                <button mat-raised-button type="submit" color="primary" [disabled]="!this.setInterestForm.valid">Set Interest</button>
+            </div>
+        </form>
+        <div class="spinner-wrapper light-theme" *ngIf="isLoading | async">
+            <mat-spinner></mat-spinner>
+        </div>
+    </mat-card-content>
+
+</mat-card>

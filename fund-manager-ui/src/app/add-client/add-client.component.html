@@ -1,1 +1,25 @@
-<p>add-client works!</p>
+
+<mat-card>
+    <mat-card-title>Adding Client</mat-card-title>
+   <mat-card-content>
+    <form class="example-form" [formGroup]="addClientForm" (ngSubmit)="SaveUser()">
+        
+      
+        <mat-form-field class="example-full-width" appearance="fill">
+          <mat-label>Client Name</mat-label>
+          <input matInput placeholder="clientName" formControlName="clientName"  >
+        </mat-form-field>
+        <mat-form-field class="example-full-width" appearance="fill">
+          <mat-label>Enter Client Email</mat-label>
+          <input matInput placeholder="Email" formControlName="email"  >
+        </mat-form-field>
+          <div>
+            <button mat-raised-button type="submit" color="primary" [disabled]="!this.addClientForm.valid">Save Client</button>
+          </div>
+      </form>
+      <div class="spinner-wrapper light-theme" *ngIf="isLoading | async">
+        <mat-spinner></mat-spinner>
+      </div>
+   </mat-card-content>
+   
+</mat-card>

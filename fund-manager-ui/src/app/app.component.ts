@@ -18,7 +18,6 @@ export class AppComponent implements DoCheck {
   title = 'angular-learn';
   currentRole: string = '';
   ngDoCheck(): void {
-    console.log("Get Role Response:" + this.service.GetRole());
     this.currentRole = this.service.GetRole() ? this.service.GetRole() : '';
   }
   loadVerifyUser() {
@@ -30,6 +29,7 @@ export class AppComponent implements DoCheck {
       }
     })
     popup.afterClosed().subscribe(item => {
+      this.service.clearToken();
       this.route.navigate(['login']);
     });
   }

@@ -34,7 +34,7 @@ export class VerifyUserComponent implements OnInit {
         item => {
           this.isLoading = new BehaviorSubject(false);
           alertify.success("Thank you! Your Account is verified.");
-          this.route.navigate(['login']);
+          this.ref.close();
         },
         error => {
           this.isLoading = new BehaviorSubject(false);

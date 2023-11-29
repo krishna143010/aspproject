@@ -1,6 +1,7 @@
 package com.krushna.accountservice.service;
 
 import com.krushna.accountservice.config.UserInfoUserDetailsService;
+import com.krushna.accountservice.repository.UserInfoRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,6 +25,8 @@ public class JwtService {
 
     @Autowired
     private UserInfoUserDetailsService userDetailsService;
+    @Autowired
+    private UserInfoRepository repository;
     public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
 
 
@@ -72,6 +75,7 @@ public class JwtService {
     private String createToken(ArrayList<String> authsList, String userName) {
         return Jwts.builder()
                 .claim("role",authsList)
+                .claim("id",repository.findByUsername(userName).get().getId())
                 .setSubject(userName)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis()+1000*60*30))

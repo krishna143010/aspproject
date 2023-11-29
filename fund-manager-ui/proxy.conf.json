@@ -1,0 +1,8 @@
+{
+    "/api": {
+      "target": "https://api.tickertape.in",
+      "secure": false,
+      "changeOrigin": true
+    }
+  }
+  

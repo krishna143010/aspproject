@@ -31,6 +31,22 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { VerifyUserComponent } from './verify-user/verify-user.component';
 import { AddClientComponent } from './add-client/add-client.component';
+import { AddAccountComponent } from './add-account/add-account.component';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
+import { TransactionStatementComponent } from './transaction-statement/transaction-statement.component';
+import { MatSortModule} from '@angular/material/sort';
+import { SummaryComponent } from './summary/summary.component';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { EditTransactionComponent } from './edit-transaction/edit-transaction.component';
+import { AboutPageComponent } from './about-page/about-page.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
+import { ResetPassword } from './reset-password/reset-password.component';
+import { SetInterestRateComponent } from './set-interest/set-interest.component';
+import { DatePipe } from '@angular/common';
+import { AvailableStocks } from './available-stocks/available-stocks.component';
+import { SettleInterestRateComponent } from './settle-interest/settle-interest.component';
+
 
 
 
@@ -46,7 +62,17 @@ import { AddClientComponent } from './add-client/add-client.component';
     UserComponent,
     ModalpopupComponent,
     VerifyUserComponent,
-    AddClientComponent
+    AddClientComponent,
+    AddAccountComponent,
+    TransactionStatementComponent,
+    SummaryComponent,
+    EditTransactionComponent,
+    AboutPageComponent,
+    ChangePasswordComponent,
+    ResetPassword,
+    SetInterestRateComponent,
+    AvailableStocks,
+    SettleInterestRateComponent
   ],
   imports: [
     BrowserModule,
@@ -68,9 +94,13 @@ import { AddClientComponent } from './add-client/add-client.component';
     JwtModule,
     MatMenuModule,
     MatToolbarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatSortModule,
+    MatExpansionModule
   ],
-  providers: [{provide:HTTP_INTERCEPTORS,useClass:TokenInterceptorService,multi:true}],
+  providers: [{provide:HTTP_INTERCEPTORS,useClass:TokenInterceptorService,multi:true},DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

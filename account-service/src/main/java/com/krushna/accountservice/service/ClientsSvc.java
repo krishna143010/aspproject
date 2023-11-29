@@ -10,8 +10,10 @@ public interface ClientsSvc {
 
     List<Clients> fetchClientsList();
 
-    Clients saveClients(Clients clients);
+    //Clients saveClients(Clients clients);
     List<Clients> fetchClientsListByFMid(Long id);
+
+    Clients saveClients(Clients Clients, String email) throws Exception;
 
     Clients fetchByClientsId(Long id);
 

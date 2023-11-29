@@ -3,11 +3,14 @@ package com.krushna.accountservice.controller;
 //import com.javalearning.springbootdemo.entity.Transactions;
 //import com.javalearning.springbootdemo.service.TransactionsSvc;
 import com.krushna.accountservice.entity.Transactions;
+import com.krushna.accountservice.model.TransactionsSummary;
 import com.krushna.accountservice.service.TransactionsSvc;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,12 +26,12 @@ public class TransactionsController {
     @Autowired
     private TransactionsSvc transactionsSvc;
     @PostMapping("/saveTransactions")
-    public Transactions saveTransactions(@Valid @RequestBody Transactions transactions){
+    public Transactions saveTransactions(@Valid @RequestBody Transactions transactions) throws Exception {
         //calling service
         logger.info("Logging for saveTransactions");
         return transactionsSvc.saveTransactions(transactions);
     }
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_FM')")
     @GetMapping("/Transactions")
     public List<Transactions> fetchTransactions(){
         return transactionsSvc.fetchTransactionsList();
@@ -47,5 +50,11 @@ public class TransactionsController {
                                   @RequestBody Transactions transactionsToBeUpdated
                                   ){
         return transactionsSvc.updateTransactionsById(id,transactionsToBeUpdated);
+    }
+    @PreAuthorize("hasAuthority('ROLE_FM')")
+    @GetMapping("/Transactions/transactionSummary/{id}")
+    public ResponseEntity<TransactionsSummary> transactionSummary(@PathVariable("id") Long id){
+        //return TransactionsSummary.builder().build();
+        return ResponseEntity.status(HttpStatus.OK).body(transactionsSvc.generateTxnSummary(id));
     }
 }

@@ -2,7 +2,6 @@ package com.krushna.accountservice.service;
 
 //import com.javalearning.springbootdemo.entity.FundManager;
 //import com.javalearning.springbootdemo.error.FundManagerNotFoundException;
-import com.krushna.accountservice.entity.FundManager;
 import com.krushna.accountservice.entity.UserInfo;
 import com.krushna.accountservice.model.UserActiveRequest;
 import com.krushna.accountservice.model.VerifyCodeRequest;
@@ -17,8 +16,12 @@ public interface UserLoginRegisterSvc {
     String changeUserActiveStatus(UserActiveRequest userActiveRequest) throws Exception;
     List<UserInfo> getAllUsers();
     UserInfo getAUserById(Integer id);
+    UserInfo getAUserByUsername(String username);
     UserInfo generateNewCode(String token);
     UserInfo generateNewCodeDirect(String username);
+    String changePassword(String token, String newPassword) throws Exception;
 
-   // UserInfo getUserByUsername(String extractUsername);
+    String resetPassword(String email) throws Exception;
+
+    // UserInfo getUserByUsername(String extractUsername);
 }

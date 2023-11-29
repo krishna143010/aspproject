@@ -75,13 +75,23 @@ public class UserLoginRegisterController {
     }
 
     @PostMapping("/authenticate")
-    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<Object> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
         logger.info("Authenticating____");
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
-        if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(authRequest.getUsername());
-        } else {
-            throw new UsernameNotFoundException("invalid user request !");
+        try{
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+            if (authentication.isAuthenticated()) {
+                if(userLoginRegisterSvc.getAUserByUsername(authRequest.getUsername()).isFirstTimeLogin()){
+                    logger.info("First time logging");
+                    return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(jwtService.generateToken(authRequest.getUsername()));
+                }
+                logger.info("User details for FTL"+userLoginRegisterSvc.getAUserByUsername(authRequest.getUsername()));
+                return ResponseEntity.status(HttpStatus.OK).body(jwtService.generateToken(authRequest.getUsername()));
+                //return jwtService.generateToken(authRequest.getUsername());
+            } else {
+                throw new UsernameNotFoundException("invalid user request !");
+            }
+        }catch (Exception e){
+            throw e;
         }
     }
 
@@ -99,6 +109,17 @@ public class UserLoginRegisterController {
         logger.info("Get all request ");
 
         return ResponseEntity.status(HttpStatus.OK).body(userLoginRegisterSvc.getAllUsers());
+    }
+    @PostMapping("/changePassword")
+    public ResponseEntity<Object> changePassword(@RequestParam(value="newPassword") String newPassword,HttpServletRequest request, HttpServletResponse response) throws Exception {
+        logger.info("Changing password");
+        //return ResponseEntity.status(HttpStatus.OK).body(userLoginRegisterSvc.changePassword());
+        return ResponseEntity.status(HttpStatus.OK).body(userLoginRegisterSvc.changePassword(request.getHeader("Authorization"),newPassword));
+    }
+    @PostMapping("/resetPassword")
+    public ResponseEntity<Object> resetPassword(@RequestParam(value="email") String email,HttpServletRequest request, HttpServletResponse response) throws Exception {
+        logger.info("Resetting password");
+        return ResponseEntity.status(HttpStatus.OK).body(userLoginRegisterSvc.resetPassword(email));
     }
 
 }

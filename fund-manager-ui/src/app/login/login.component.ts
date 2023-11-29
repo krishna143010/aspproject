@@ -22,8 +22,16 @@ export class LoginComponent implements OnInit {
       this.userService.ProceedLogin(input.value).subscribe(item => {
         this.respdata=item;
         if(this.respdata!=null){
-          localStorage.setItem('token',this.respdata);
-          this.route.navigate(['home']);
+          console.log("Resp data:"+JSON.stringify(this.respdata));
+          
+          localStorage.setItem('token',this.respdata.body);
+          //localStorage.setItem('token',"eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjpbIlJPTEVfQ0xJRU5UIl0sImlkIjoxMSwic3ViIjoia3Jpc2huYTE0MzAxMCIsImlhdCI6MTcwMDc4MzQ4NiwiZXhwIjoxNzAwNzg1Mjg2fQ.O3tVF3AxSASVQi2Zd9nc3MQpsdYV4cUpidnm3CaIdVM");
+          if(this.respdata.status==206){
+            this.route.navigate(['changePassword']);
+          }else{
+            this.route.navigate(['home']);
+          }
+          
 
         }else{
           //alert("Login Failed");
@@ -31,7 +39,12 @@ export class LoginComponent implements OnInit {
         }
       },
       error => {
-        alertify.error("Invalid Credentials");
+        if(JSON.parse(error.error).statusCode==401){
+          alertify.error("Invalid Credentials");
+        }else{
+          alertify.error("Your Account is Not yet Active. Please wait for Activation");
+        }
+        
       }
       );
     }

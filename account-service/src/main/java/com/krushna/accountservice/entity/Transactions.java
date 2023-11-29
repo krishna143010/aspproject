@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 //import javax.persistence.*;
 import java.sql.Timestamp;
@@ -13,6 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@SuperBuilder
 public class Transactions {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,6 +29,7 @@ public class Transactions {
     private Accounts toAccountId;
     private String remarks;
     private Date date;
+    @Column(columnDefinition = "BIGINT DEFAULT 0")
     private long Amount;
     @Column(name = "timestamp", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     public Timestamp timestamp;

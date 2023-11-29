@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 //import javax.persistence.*;
 //import javax.validation.constraints.NotNull;
@@ -15,9 +16,12 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
+@Table(
+        name = "clients", uniqueConstraints = @UniqueConstraint(columnNames = {"clientName", "fund_manager_user_info_id"})
+)
 public class Clients {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private long clientId;
     @ManyToOne
     @NotNull
@@ -32,4 +36,7 @@ public class Clients {
     private String activeStatus;
     @Column(name = "timestamp", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     public Timestamp timestamp;
+    @OneToOne
+    @MapsId
+    private UserInfo userInfo;
 }

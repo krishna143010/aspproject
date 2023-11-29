@@ -17,10 +17,6 @@ import java.util.Optional;
 public class FundManagerSvcImpl implements FundManagerSvc{
     @Autowired
     private FundManagerRepo fundManagerRepo;
-    @Autowired
-    private JwtService jwtService;
-    @Autowired
-    private UserLoginRegisterSvc userLoginRegisterSvc;
 
 
     @Override

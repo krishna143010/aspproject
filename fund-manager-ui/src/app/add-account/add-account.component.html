@@ -1,0 +1,35 @@
+<mat-card>
+    <mat-card-title>Adding Account</mat-card-title>
+    <mat-card-content>
+        <form class="example-form" [formGroup]="addAccountForm" (ngSubmit)="SaveUser()">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Client Name</mat-label>
+                <mat-select formControlName="clients">
+                    <mat-option *ngFor="let control of this.avlClients" [value]="control">
+                        {{ control.clientName }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Account Holder Name</mat-label>
+                <input matInput placeholder="accountName" formControlName="accountName">
+            </mat-form-field>
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Account Number/Identifier</mat-label>
+                <input matInput placeholder="accountNumber" formControlName="accountNumber">
+            </mat-form-field>
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>UPI ID</mat-label>
+                <input matInput placeholder="upiId" formControlName="upiId">
+            </mat-form-field>
+            <div>
+                <button mat-raised-button type="submit" color="primary" [disabled]="!this.addAccountForm.valid">Save
+                    Account</button>
+            </div>
+        </form>
+        <div class="spinner-wrapper light-theme" *ngIf="isLoading | async">
+            <mat-spinner></mat-spinner>
+        </div>
+    </mat-card-content>
+
+</mat-card>

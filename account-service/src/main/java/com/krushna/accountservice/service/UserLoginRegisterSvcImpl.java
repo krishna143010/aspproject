@@ -3,10 +3,7 @@ package com.krushna.accountservice.service;
 //import com.javalearning.springbootdemo.entity.FundManager;
 //import com.javalearning.springbootdemo.error.FundManagerNotFoundException;
 //import com.javalearning.springbootdemo.repository.FundManagerRepo;
-import com.krushna.accountservice.entity.FundManager;
-import com.krushna.accountservice.entity.Roles;
-import com.krushna.accountservice.entity.UserInfo;
-import com.krushna.accountservice.entity.UserInfoListener;
+import com.krushna.accountservice.entity.*;
 import com.krushna.accountservice.error.InvalidCodeException;
 import com.krushna.accountservice.error.InvalidUserException;
 import com.krushna.accountservice.error.RoleNotPresentException;
@@ -14,9 +11,7 @@ import com.krushna.accountservice.error.UserNameOrEmailConflictException;
 import com.krushna.accountservice.model.JmsMessageToBeSend;
 import com.krushna.accountservice.model.UserActiveRequest;
 import com.krushna.accountservice.model.VerifyCodeRequest;
-import com.krushna.accountservice.repository.FundManagerRepo;
-import com.krushna.accountservice.repository.RolesRepository;
-import com.krushna.accountservice.repository.UserInfoRepository;
+import com.krushna.accountservice.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
+
 @Service
 @Slf4j
 public class UserLoginRegisterSvcImpl implements UserLoginRegisterSvc{
@@ -40,6 +35,10 @@ public class UserLoginRegisterSvcImpl implements UserLoginRegisterSvc{
     @Autowired
     private FundManagerSvc fundManagerSvc;
     @Autowired
+    private AccountsRepo accountsRepo;
+    @Autowired
+    private ClientsRepo clientsRepo;
+    @Autowired
     private JmsServiceImpl jmsService;
     @Autowired
     private UserInfoListener userInfoListener;
@@ -51,11 +50,19 @@ public class UserLoginRegisterSvcImpl implements UserLoginRegisterSvc{
             try{
                 UserInfo userInfoAdded=userInfoRepository.save(userInfo);
                 if(userInfoAdded!=null){
-                    try{
-                        fundManagerSvc.saveFundManager(FundManager.builder().fmName(userInfoAdded.getUsername()).activeStatus(userInfoAdded.isEnabled()).deleteStatus(false).userInfo(userInfoAdded).build());
-
-                    }catch (Exception e){
-                        throw new Exception("Save failed. Kindly check logs.");
+                    if(userInfoAdded.getRoles().equals("ROLE_FM")){
+                        try{
+                            FundManager fmAdd=fundManagerSvc.saveFundManager(FundManager.builder().fmName(userInfoAdded.getUsername()).activeStatus(userInfoAdded.isEnabled()).deleteStatus(false).userInfo(userInfoAdded).build());
+                            /*try{
+                                Clients clientExternalAdded=clientsRepo.save(Clients.builder().clientName("External").fundManager(fmAdd).build());
+                                accountsRepo.save(Accounts.builder().accountName("External").accountNumber("123456").clients(clientExternalAdded).build());
+                            }catch (Exception e){
+                                log.warn("Not creating the external as Client and Account "+e.getMessage());
+                                throw e;
+                            }*/
+                        }catch (Exception e){
+                            throw new Exception("User Created, But External Client Not created. You can go for verification");
+                        }
                     }
                     jmsService.sendMessage(JmsMessageToBeSend.builder().message("Verification code is "+userInfoAdded.getAuthenticatioCode()+" and is valid until "+userInfoAdded.getAuthenticatioCodeExpiry()).subject("Code from Fund Manager Application").toemail(userInfoAdded.getEmail()).build());
                     return "User "+userInfo.getUsername()+" Added Successfully";
@@ -110,6 +117,13 @@ public class UserLoginRegisterSvcImpl implements UserLoginRegisterSvc{
         Optional<UserInfo> UserResponse= userInfoRepository.findById(id);
         return UserResponse.get();
     }
+
+    @Override
+    public UserInfo getAUserByUsername(String username) {
+        Optional<UserInfo> UserResponse= userInfoRepository.findByUsername(username);
+        return UserResponse.get();
+    }
+
     @Override
     public UserInfo generateNewCode(String token) {
 
@@ -125,6 +139,35 @@ public class UserLoginRegisterSvcImpl implements UserLoginRegisterSvc{
         existingData.setAuthenticatioCode(userInfoListener.generateRandomString());
         existingData.setAuthenticatioCodeExpiry(userInfoListener.generateDateTime());
         return userInfoRepository.save(existingData);
+    }
+
+    @Override
+    public String changePassword(String token, String newPassword) throws Exception {
+        Optional<UserInfo> userInfo=userInfoRepository.findByUsername(jwtService.extractUsername(token.replace("Bearer ","")));
+        if(userInfo.isPresent()){
+            userInfo.get().setPassword(passwordEncoder.encode(newPassword));
+            userInfo.get().setFirstTimeLogin(false);
+            userInfoRepository.save(userInfo.get());
+            log.info("Password for "+jwtService.extractUsername(token.replace("Bearer ",""))+" changed Successfully with "+newPassword);
+            return  "Password for "+jwtService.extractUsername(token.replace("Bearer ",""))+" changed Successfully";
+        }else{
+            throw new Exception("Password change failed for"+jwtService.extractUsername(token.replace("Bearer ","")));
+        }
+    }
+    @Override
+    public String resetPassword(String email) throws Exception {
+        Optional<UserInfo> userInfo=userInfoRepository.findByEmail(email);
+        if(userInfo.isPresent()){
+            String psw=userInfoListener.generateRandomString();
+            userInfo.get().setPassword(passwordEncoder.encode(psw));
+            userInfo.get().setFirstTimeLogin(true);
+            userInfoRepository.save(userInfo.get());
+            jmsService.sendMessage(JmsMessageToBeSend.builder().message("The Credentials for accessing the FM portal is Username:"+userInfo.get().getUsername()+" and One time login Password is:"+psw+" \nPlease Do Login from http://localhost:4200 and reset your Password.").subject("Reset done for your account at FM").toemail(email).build());
+            log.info("The Credentials for accessing the FM portal for "+email+" is Username:"+userInfo.get().getUsername()+" and One time login Password is:"+psw);
+            return  "Account reset for "+email+" changed Successfully. Please check your email for further actions";
+        }else{
+            throw new Exception("User not exists");
+        }
     }
 
 //    @Override

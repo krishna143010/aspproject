@@ -1,0 +1,86 @@
+<mat-form-field appearance="standard">
+    <mat-label>Filter Table</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Search" #input>
+</mat-form-field>
+<h2>Transactions</h2>
+<div style="width:800px" class="mat-elevation-z8">
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+
+    <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+  
+    <!-- Position Column -->
+    <ng-container matColumnDef="fromClientId">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> From </th>
+      <td mat-cell *matCellDef="let element"> {{element.fromClientId.clientName}} </td>
+    </ng-container>
+  
+    <!-- Name Column -->
+    <ng-container matColumnDef="toClientId">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> To </th>
+      <td mat-cell *matCellDef="let element"> {{element.toClientId.clientName}} </td>
+    </ng-container>
+  
+    <!-- Weight Column -->
+    <ng-container matColumnDef="fromAccountId">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Debited from </th>
+      <td mat-cell *matCellDef="let element"> {{element.fromAccountId.accountName}} </td>
+    </ng-container>
+  
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="toAccountId">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Credited To </th>
+        <td mat-cell *matCellDef="let element"> {{element.toAccountId.accountName}} </td>
+    </ng-container>
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
+        <td mat-cell *matCellDef="let element"> {{element.date | date:'MM-dd-yy' }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount </th>
+        <td mat-cell *matCellDef="let element"> {{element.amount | currency:'INR':'symbol':'1.0'}} </td>
+      </ng-container>
+      <ng-container matColumnDef="remarks">
+        <th mat-header-cell *matHeaderCellDef> Remarks </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{element.remarks}}"> {{element.remarks | slice:0:20}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Action">
+        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <td mat-cell *matCellDef="let element"> 
+            <!-- <button mat-raised-button color="primary" (click)="FunctionUpdate(element.id)">Change</button>  -->
+            <button mat-icon-button matTooltip="Click to Edit" class="iconbutton"
+            color="primary" (click)="transactionUpdate(element.transId)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Click to Delete" class="iconbutton"
+             color="warn" (click)="transactionDelete(element.transId)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+        
+      </ng-container>
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef> Type </th>
+        <td mat-cell *matCellDef="let element" > 
+            <mat-icon color="warn" matTooltip="Deducted" *ngIf="element.fromClientId.clientName!='External'&&element.toClientId.clientName=='External'">arrow_downward</mat-icon>
+            <mat-icon color="primary" matTooltip="Credited" *ngIf="element.fromClientId.clientName=='External'&&element.toClientId.clientName!='External'">keyboard_arrow_up</mat-icon>
+            <mat-icon color="primary" matTooltip="Internal Transfers" *ngIf="!(element.fromClientId.clientName!='External'&&element.toClientId.clientName=='External') && !(element.fromClientId.clientName=='External'&&element.toClientId.clientName!='External')">swap_horizontal_circle</mat-icon>
+        </td>
+        
+      </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+      </tr>
+  </table>
+ <mat-paginator [length]="100"
+              [pageSize]="5"
+              [pageSizeOptions]="[1,5, 10, 25, 100]"
+              aria-label="Select page">
+</mat-paginator> 
+</div>

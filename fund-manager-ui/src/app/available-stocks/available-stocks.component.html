@@ -1,0 +1,60 @@
+
+<h2>NIFT 50 Stocks</h2>
+<div style="width:800px" class="mat-elevation-z8">
+
+<table mat-table [dataSource]="dataSource" >
+
+    <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+  
+    <!-- Position Column -->
+    <ng-container matColumnDef="symbol">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
+    </ng-container>
+  
+    <!-- Name Column -->
+    <ng-container matColumnDef="lastPrice">
+      <th mat-header-cell *matHeaderCellDef> Current Value </th>
+      <td mat-cell *matCellDef="let element"> {{element.lastPrice}} </td>
+    </ng-container>
+  
+    <!-- Weight Column -->
+    <ng-container matColumnDef="yearHigh">
+      <th mat-header-cell *matHeaderCellDef> Highest </th>
+      <td mat-cell *matCellDef="let element"> {{element.yearHigh}} </td>
+    </ng-container>
+  
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="yearLow">
+      <th mat-header-cell *matHeaderCellDef> Lowest </th>
+      <td mat-cell *matCellDef="let element"> {{element.yearLow}} </td>
+    </ng-container>
+    <ng-container matColumnDef="perChange365d">
+      <th mat-header-cell *matHeaderCellDef> % Change 1yr </th>
+      <td mat-cell *matCellDef="let element"> {{element.perChange365d}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="perChange30d">
+        <th mat-header-cell *matHeaderCellDef> % Change 1mo </th>
+        <td mat-cell *matCellDef="let element"> {{element.perChange30d}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Action">
+        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <td mat-cell *matCellDef="let element"> 
+            <button mat-raised-button color="primary" (click)="FunctionUpdate(element.id)">Change</button> 
+            <!-- | 
+            <button mat-raised-button color="accent" (click)="FunctionDelete(element.userid)">Delete</button> -->
+        </td>
+      </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+ <mat-paginator [length]="100"
+              [pageSize]="5"
+              [pageSizeOptions]="[1,5, 10, 25, 100]"
+              aria-label="Select page">
+</mat-paginator> 
+</div>

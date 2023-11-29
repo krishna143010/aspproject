@@ -312,23 +312,28 @@
   />
   <button mat-button routerLink="home">Home</button>
   <button mat-button routerLink="transaction" *ngIf="currentRole=='ROLE_FM'">Transaction</button>
-  <button mat-button routerLink="Summary" *ngIf="currentRole=='ROLE_FM'">Summary</button>
-  <button mat-button [matMenuTriggerFor]="services" >Services</button>
+  <button mat-button routerLink="summary" *ngIf="currentRole=='ROLE_FM'||currentRole=='ROLE_CLIENT'">Summary</button>
+  <button mat-button [matMenuTriggerFor]="services" *ngIf="currentRole!='ROLE_CLIENT'">Services</button>
   <mat-menu #services>
     <button mat-menu-item *ngIf="currentRole=='ROLE_ADMIN'" routerLink="manageusers">Manage FMs</button>
     <button mat-menu-item *ngIf="currentRole==''" (click)="loadVerifyUser()">Verify User</button>
     <button mat-menu-item *ngIf="currentRole=='ROLE_FM'" routerLink="addClient">Add Client</button>
     <button mat-menu-item *ngIf="currentRole=='ROLE_FM'" routerLink="addAccount">Add Account</button>
+    <button mat-menu-item *ngIf="currentRole=='ROLE_FM'" routerLink="setInterest">Set Interest Rate</button>
+    <button mat-menu-item *ngIf="currentRole=='ROLE_FM'" routerLink="settleInterest">Settle Interest</button>
+    <button mat-menu-item *ngIf="currentRole=='ROLE_FM'" routerLink="avlStcoks">Invest</button>
   </mat-menu>
-  <button mat-button routerLink="Statement" *ngIf="currentRole=='ROLE_FM'">Statement</button>
-  <button mat-button routerLink="About">About</button>
+  <button mat-button routerLink="statement" *ngIf="currentRole=='ROLE_FM'">Statement</button>
+  <button mat-button routerLink="about">About</button>
   <div class="spacer"></div>
   <button mat-button routerLink="login" *ngIf="currentRole==''">Log In</button>
-  <button mat-button [matMenuTriggerFor]="profileOptions" *ngIf="currentRole!=''" >Profile</button>
-  <mat-menu #profileOptions>
-    <button mat-menu-item>User Name</button>
+  <button mat-button *ngIf="currentRole!=''" [matMenuTriggerFor]="profile">Profile</button>
+  <mat-menu #profile>
+    <button mat-menu-item routerLink="changePassword">Change Password</button>
     <button mat-menu-item (click)="logOutClicked()">Log out</button>
   </mat-menu>
+  
+  
 </div>
 <div class="content">
   <router-outlet></router-outlet>

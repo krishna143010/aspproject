@@ -21,7 +21,7 @@ import java.util.Date;
 public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     @Column(unique = true)
     private String username;
     @Column(unique = true)
@@ -45,6 +45,8 @@ public class UserInfo {
     private boolean AuthenticationStatus;
     @Column(columnDefinition = "boolean default false")
     private boolean Enabled;
+    @Column(columnDefinition = "boolean default false")
+    private boolean firstTimeLogin;
     @Column(name = "timestamp", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     public Timestamp timestamp;
     /*public UserInfo(){

@@ -1,0 +1,67 @@
+<mat-card>
+    <mat-card-title>Transaction Update</mat-card-title>
+    <mat-card-content>
+        <form class="example-form" [formGroup]="transactionAddForm" (ngSubmit)="SaveUser()">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Trans ID</mat-label>
+                <input matInput placeholder="Transactionn ID" formControlName="transId">
+            </mat-form-field>
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>From</mat-label>
+                <mat-select formControlName="fromClientId">
+                    <mat-option *ngFor="let control of this.avlClients" [value]="control">
+                        {{ control.clientName }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>To</mat-label>
+                <mat-select formControlName="toClientId">
+                    <mat-option *ngFor="let control of this.avlClients" [value]="control">
+                        {{ control.clientName }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Deducting From</mat-label>
+                <mat-select formControlName="fromAccountId">
+                    <mat-option *ngFor="let control of this.avlAccounts" [value]="control">
+                        {{ control.accountName }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Credit To</mat-label>
+                <mat-select formControlName="toAccountId">
+                    <mat-option *ngFor="let control of this.avlAccounts" [value]="control">
+                        {{ control.accountName }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Amount</mat-label>
+                <input matInput placeholder="Amount" formControlName="amount">
+            </mat-form-field>
+            
+            <mat-form-field>
+                <mat-label>Date of Transaction</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="date" [readOnly]="true">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Remarks</mat-label>
+                <input matInput placeholder="remarks" formControlName="remarks">
+            </mat-form-field>
+            <div>
+                <button mat-raised-button type="submit" color="primary" [disabled]="!this.transactionAddForm.valid">Save
+                    Transaction</button> | <button mat-button mat-dialog-close>Close</button>
+            </div>
+        </form>
+        <div class="spinner-wrapper light-theme" *ngIf="isLoading | async">
+            <mat-spinner></mat-spinner>
+        </div>
+    </mat-card-content>
+
+</mat-card>

@@ -27,14 +27,10 @@ public class ClientsController {
 
     @Autowired
     private ClientsSvc clientsSvc;
-    @Autowired
-    private FundManagerSvc fundManagerSvc;
-    @PostMapping(value ="/saveClients", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Clients saveClients(@Valid @RequestBody Clients clients, HttpServletRequest request, HttpServletResponse response){
-        //logger.info("FM details are:"+fundManagerSvc.getFMByToken(request.getHeader("Authorization")));
-        //clients.setFundManager(fundManagerSvc.getFMByToken(request.getHeader("Authorization")));
-        logger.info("Logging for saveClients");
-        return clientsSvc.saveClients(clients);
+    @PostMapping(value ="/saveClients")
+    public Clients saveClients(@Valid @RequestBody Clients clients,@RequestParam(value="clientEmail") String clientEmail, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        logger.info("Logging for saveClients"+request);
+        return clientsSvc.saveClients(clients,clientEmail);
     }
     @GetMapping("/Clients")
     public List<Clients> fetchClients(){

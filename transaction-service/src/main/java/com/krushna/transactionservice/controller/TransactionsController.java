@@ -48,4 +48,8 @@ public class TransactionsController {
                                   ){
         return transactionsSvc.updateTransactionsById(id,transactionsToBeUpdated);
     }
+    @GetMapping("/gateway-test")
+    public String gateWayTest() {
+        return "Working________";
+    }
 }

@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 //import javax.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -25,11 +26,12 @@ public class TransactionsController {
 
     @Autowired
     private TransactionsSvc transactionsSvc;
+    @PreAuthorize("hasAuthority('ROLE_FM')")
     @PostMapping("/saveTransactions")
-    public Transactions saveTransactions(@Valid @RequestBody Transactions transactions) throws Exception {
+    public Transactions saveTransactions(@Valid @RequestBody Transactions transactions, Principal principal) throws Exception {
         //calling service
         logger.info("Logging for saveTransactions");
-        return transactionsSvc.saveTransactions(transactions);
+        return transactionsSvc.saveTransactions(transactions,principal.getName());
     }
     @PreAuthorize("hasAuthority('ROLE_FM')")
     @GetMapping("/Transactions")

@@ -28,6 +28,9 @@ public class Transactions {
     @ManyToOne
     private Accounts toAccountId;
     private String remarks;
+    @ManyToOne
+    @JoinColumn(name = "fmid_user_info_id")
+    private FundManager fmid;
     private Date date;
     @Column(columnDefinition = "BIGINT DEFAULT 0")
     private long Amount;

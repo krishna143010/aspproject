@@ -16,6 +16,10 @@ public interface AccountsSvc {
 
     Accounts saveAccounts(Accounts accounts) throws Exception;
 
+    List<AccountStatementTxns> accountStatement(long accountId, Date dateTillItGenerates, Long clinetID) throws Exception;
+
+    String accountSettlement(long accountId, Date dateTillItGenerates, String fmName) throws Exception;
+
     Accounts fetchByAccountsId(Long id);
 
     public void deleteAccountsById(Long id);
@@ -25,5 +29,5 @@ public interface AccountsSvc {
     List<Accounts> getAccountsForFMID(long fmID);
     Interest saveInterest(Interest interest) throws Exception;
     Investment saveInvestment(Investment investment) throws Exception;
-    List<AccountStatementTxns> accountStatement(long accountId, Date dateTillItGenerates) throws Exception;
+    //List<AccountStatementTxns> accountStatement(long accountId, Date dateTillItGenerates) throws Exception;
 }

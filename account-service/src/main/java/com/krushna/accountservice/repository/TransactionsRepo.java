@@ -5,6 +5,7 @@ import com.krushna.accountservice.entity.Accounts;
 import com.krushna.accountservice.entity.FundManager;
 import com.krushna.accountservice.entity.Transactions;
 import com.krushna.accountservice.model.AccountSummary;
+import com.krushna.accountservice.model.TxnStatementForSummary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -91,4 +92,8 @@ public interface TransactionsRepo extends JpaRepository<Transactions, Long> {
     )
 
     Long getAccountSummary(long accountId,long fmID);
+    @Query(nativeQuery = true,
+            value = "SELECT from_account_id_account_id AS accountID,from_client_id_user_info_id AS clientID,-1*amount as amount,fmid_user_info_id AS FM,date FROM transactions UNION SELECT to_account_id_account_id AS accountID,to_client_id_user_info_id AS clientID,amount,fmid_user_info_id AS FM,date FROM transactions"
+    )
+    List<Object> txnStatementForSummary();
 }

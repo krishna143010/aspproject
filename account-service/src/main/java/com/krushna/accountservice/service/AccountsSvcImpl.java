@@ -2,26 +2,26 @@ package com.krushna.accountservice.service;
 
 //import com.javalearning.springbootdemo.entity.Accounts;
 //import com.javalearning.springbootdemo.repository.AccountsRepo;
-import com.krushna.accountservice.entity.Accounts;
-import com.krushna.accountservice.entity.Interest;
-import com.krushna.accountservice.entity.Investment;
-import com.krushna.accountservice.entity.Transactions;
+import com.krushna.accountservice.entity.*;
 import com.krushna.accountservice.model.AccountStatementTxns;
-import com.krushna.accountservice.repository.AccountsRepo;
-import com.krushna.accountservice.repository.InterestRepo;
-import com.krushna.accountservice.repository.InvestmentRepo;
-import com.krushna.accountservice.repository.TransactionsRepo;
+import com.krushna.accountservice.model.TxnStatementForSummary;
+import com.krushna.accountservice.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class AccountsSvcImpl implements AccountsSvc{
+    @Autowired
+    private ClientsRepo clientsRepo;
+    @Autowired
+    private FundManagerRepo fundManagerRepo;
     @Autowired
     private AccountsRepo accountsRepo;
     @Autowired
@@ -30,6 +30,8 @@ public class AccountsSvcImpl implements AccountsSvc{
     private InvestmentRepo investmentRepo;
     @Autowired
     private TransactionsRepo transactionsRepo;
+    @Autowired
+    TransactionsSvc transactionsSvc;
 
     @Override
     public List<Accounts> fetchAccountsList() {
@@ -44,14 +46,14 @@ public class AccountsSvcImpl implements AccountsSvc{
         return accountsRepo.save(Accounts);
     }
     @Override
-    public List<AccountStatementTxns> accountStatement(long accountId, Date dateTillItGenerates) throws Exception{
+    public List<AccountStatementTxns> accountStatement(long accountId, Date dateTillItGenerates, Long clinetID) throws Exception{
         List<AccountStatementTxns> accountStatementTxnList=new ArrayList<>();
         /*Long accumulatedAmountForInterestCalc= Long.valueOf(0);
         Date dateForNoOfDays = null;*/
         AccountStatementTxns prevRecord=null;
         AccountStatementTxns accountStatementTxns=null;
         boolean isFirstIteration = true;
-        for (Object result : accountsRepo.getAccountStatement(accountId,dateTillItGenerates)) {
+        for (Object result : accountsRepo.getAccountStatement(accountId,dateTillItGenerates,clinetID)) {
             if (result instanceof Object[]) {
                 Object[] row = (Object[]) result;
 
@@ -88,8 +90,58 @@ public class AccountsSvcImpl implements AccountsSvc{
                 log.info("Unexpected result type: " + result.getClass());
             }
         }
+        if(prevRecord!=null){
+            long diffInMillies = Math.abs(dateTillItGenerates.getTime() - prevRecord.getDate().getTime());
+            long days= TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+            double interest= ((prevRecord.getInterestRate()/(100*365))*days* prevRecord.getAccumulatedAmountForInterestCalc())+ prevRecord.getAccumulatedInterest();
+            interest = Math.round(interest * 100.0) / 100.0;
+            log.info("No of days: "+days+" Interest Earned (total): "+interest+" Interest Rate: "+prevRecord.getInterestRate()+" Amount: "+0+" accumForNextTime: "+(prevRecord.getAccumulatedAmountForInterestCalc()+0));
+            accountStatementTxns=new AccountStatementTxns(0L, accountId, dateTillItGenerates, prevRecord.getInterestRate(),prevRecord.getAccumulatedAmountForInterestCalc()+0, interest);
+            accountStatementTxnList.add(accountStatementTxns);
+        }
         return accountStatementTxnList;
-    };
+    }
+    private Double accountTotalInterestTillDate(long accountId, Date dateTillItGenerates,Long clinet)throws Exception{
+        List<AccountStatementTxns> accountStatementTxns=accountStatement(accountId,dateTillItGenerates,clinet);
+        return  accountStatementTxns.get(accountStatementTxns.size()-1).getAccumulatedInterest();
+    }
+    @Override
+    public String accountSettlement(long accountId, Date dateTillItGenerates, String fmName) throws Exception {
+        long fmid=fundManagerRepo.findByfmName(fmName).getFmid();
+        Double totalInterestAccount=accountTotalInterestTillDate(accountId, dateTillItGenerates,null);
+        log.info("totalInterest AccountLevel:"+totalInterestAccount);
+        long settledTillNowAccount=transactionsRepo.findAll().stream().filter(item -> item.getFmid().getFmid()==fmid).filter(item->item.getFromAccountId().getAccountName().equals("Interest")).filter(item->item.getToAccountId().getAccountId()==accountId).mapToLong(Transactions::getAmount).sum();
+        //long settledTillNowAccount=transactionsSvc.txnStatementSummaryList().stream().filter(item -> item.getFM()==fmid).filter(item -> item.getAccountID()==accountId).filter(item -> !item.getDate().toInstant().isAfter(dateTillItGenerates.toInstant())).mapToLong(TxnStatementForSummary::getAmount).sum();
+        log.info("settledTillNow AccountLevel:"+settledTillNowAccount);
+        //return (long) (totalInterest-settledTillNow);
+        if(transactionsRepo.findAll().stream().filter(item -> item.getFmid().getFmid()==fmid).filter(item -> item.getFromAccountId().getAccountName().equals("Interest")).filter(item -> item.getToAccountId().getAccountId()==accountId).filter(item -> !item.getDate().toInstant().isBefore(dateTillItGenerates.toInstant())).count()>0){
+            throw new Exception("We have already settled your Interest Already on or after this date");
+        }
+        List<Clients> avlClients=avlClientsForTheGivenAccount(accountId,fmid);
+        for (Clients avlClient : avlClients) {
+            Double totalInterest=accountTotalInterestTillDate(accountId, dateTillItGenerates,avlClient.getClientId());
+            long settledTillNow=transactionsRepo.findAll().stream().filter(item -> item.getFmid().getFmid()==fmid).filter(item->item.getFromAccountId().getAccountName().equals("Interest")).filter(item->item.getToAccountId().getAccountId()==accountId).filter(item->item.getFromClientId().getClientId()==avlClient.getClientId()).filter(item->item.getToClientId().getClientId()==avlClient.getClientId()).mapToLong(Transactions::getAmount).sum();
+            log.info("totalInterest for "+avlClient.getClientName()+": "+totalInterest);
+            log.info("settledTillNow for "+avlClient.getClientName()+": "+settledTillNow);
+            makeInterestTransaction(accountId, dateTillItGenerates, fmid,avlClient.getClientId(),(long) (totalInterest-settledTillNow));
+        }
+        return "Settled Successfully";
+    }
+    void makeInterestTransaction(long accountId, Date dateTillItGenerates, long fmid,long clientId, long settleAmount){
+        transactionsRepo.save(Transactions.builder().fromAccountId(accountsRepo.findByaccountName("Interest")).toAccountId(accountsRepo.findById(accountId).get()).fromClientId(clientsRepo.findById(clientId).get()).toClientId(clientsRepo.findById(clientId).get()).Amount(settleAmount).date(dateTillItGenerates).remarks("Interest till:"+new SimpleDateFormat("MM-dd-yyyy").format(dateTillItGenerates)+" Recorded date in FM:"+new SimpleDateFormat("MM-dd-yyyy").format(new Date())).fmid(fundManagerRepo.findById(fmid).get()).build());
+    }
+    List<Clients> avlClientsForTheGivenAccount(long accountId,long fmid){
+        return transactionsSvc.txnStatementSummaryList().stream().filter(item -> item.getFM()==fmid).filter(item -> item.getAccountID()==accountId).map(TxnStatementForSummary::getClientID).distinct()  // To get unique clientIDs
+                .map(clientID -> clientsRepo.findById(clientID).get()) // Assuming Clients has a constructor that accepts clientID
+                .collect(Collectors.toList());
+    }
+    List<Accounts> avlAccountsForTheGivenClient(long clientId,long fmid){
+        return transactionsSvc.txnStatementSummaryList().stream().filter(item -> item.getFM()==fmid).filter(item -> item.getClientID()==clientId).map(TxnStatementForSummary::getAccountID).distinct()  // To get unique clientIDs
+                .map(accountId -> accountsRepo.findById(accountId).get()) // Assuming Clients has a constructor that accepts clientID
+                .collect(Collectors.toList());
+    }
+
+    ;
 
     @Override
     public Accounts fetchByAccountsId(Long id){

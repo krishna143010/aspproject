@@ -3,6 +3,7 @@ package com.krushna.accountservice.service;
 //import com.javalearning.springbootdemo.entity.Transactions;
 import com.krushna.accountservice.entity.Transactions;
 import com.krushna.accountservice.model.TransactionsSummary;
+import com.krushna.accountservice.model.TxnStatementForSummary;
 
 import java.util.List;
 
@@ -11,7 +12,9 @@ public interface TransactionsSvc {
 
     List<Transactions> fetchTransactionsList();
 
-    Transactions saveTransactions(Transactions transactions) throws Exception;
+    //Transactions saveTransactions(Transactions transactions) throws Exception;
+
+    Transactions saveTransactions(Transactions Transactions, String fmName) throws Exception;
 
     Transactions fetchByTransactionsId(Long id);
 
@@ -20,4 +23,5 @@ public interface TransactionsSvc {
     Transactions updateTransactionsById(Long id, Transactions transactionsToBeUpdated);
 
     TransactionsSummary generateTxnSummary(Long id);
+    List<TxnStatementForSummary> txnStatementSummaryList();
 }

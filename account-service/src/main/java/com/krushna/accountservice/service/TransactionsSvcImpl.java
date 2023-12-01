@@ -9,6 +9,7 @@ import com.krushna.accountservice.entity.Transactions;
 import com.krushna.accountservice.model.AccountSummary;
 import com.krushna.accountservice.model.ClientSummary;
 import com.krushna.accountservice.model.TransactionsSummary;
+import com.krushna.accountservice.model.TxnStatementForSummary;
 import com.krushna.accountservice.repository.AccountsRepo;
 import com.krushna.accountservice.repository.ClientsRepo;
 import com.krushna.accountservice.repository.FundManagerRepo;
@@ -17,10 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -41,8 +39,9 @@ public class TransactionsSvcImpl implements TransactionsSvc{
     }
 
     @Override
-    public Transactions saveTransactions(Transactions Transactions) throws Exception {
+    public Transactions saveTransactions(Transactions Transactions, String fmName) throws Exception {
             checkTransactionValidity(Transactions);
+            Transactions.setFmid(fundManagerRepo.findByfmName(fmName));
             return transactionsRepo.save(Transactions);
 
 
@@ -106,6 +105,27 @@ public class TransactionsSvcImpl implements TransactionsSvc{
         List<ClientSummary> clientSummaryList = generateClientSummaryForFM(fmForSummary);
         return TransactionsSummary.builder().availableFund(totalFund).clientSummaries(clientSummaryList).accountSummaries(accountSummaryList).build();
     }
+
+    @Override
+    public List<TxnStatementForSummary> txnStatementSummaryList() {
+        List<TxnStatementForSummary> txnStatementForSummaryList = new ArrayList<>();
+        for (Object result : transactionsRepo.txnStatementForSummary()) {
+            if (result instanceof Object[]) {
+                Object[] row = (Object[]) result;
+                Long accountID = (Long) row[0];
+                Long clientID = (Long) row[1];
+                Long amount = (Long) row[2];
+                Long FM = (Long) row[3];
+                Date date=(Date) row[4];
+                txnStatementForSummaryList.add(TxnStatementForSummary.builder().accountID(accountID).clientID(clientID).amount(amount).FM(FM).date(date).build());
+            } else {
+                // Handle unexpected result type
+                log.info("Unexpected result type: " + result.getClass());
+            }
+        }
+        return txnStatementForSummaryList;
+    }
+
     public List<AccountSummary> generateAccountSummaryForFM(Long fmID) {
         List<Accounts> accountsAll=accountsRepo.findAll().stream()
                 .filter(account -> account.getClients().getFundManager().getFmid() == fmID).collect(Collectors.toList());
